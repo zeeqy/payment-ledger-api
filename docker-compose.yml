@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ledger
+      POSTGRES_USER: ledger
+      POSTGRES_PASSWORD: ledger
+    ports:
+      - "55433:5432"   # 55432 is used by project 01
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ledger -d ledger"]
+      interval: 2s
+      retries: 20
+    volumes:
+      - ledger-data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    profiles: ["app"]   # `docker compose --profile app up` runs the API too
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/ledger
+      JWT_SECRET: ${JWT_SECRET:-dev-only-secret-change-me-0123456789abcdef}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@ledger.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin-dev-password}
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-120}
+      RISK_URL: ${RISK_URL:-}
+    ports:
+      - "8080:8080"
+
+volumes:
+  ledger-data:

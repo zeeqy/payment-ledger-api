@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: payment-ledger-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:55433/ledger}
+    username: ${DB_USER:ledger}
+    password: ${DB_PASSWORD:ledger}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:20}
+  threads:
+    virtual:
+      enabled: true
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  swagger-ui:
+    path: /docs
+  api-docs:
+    path: /openapi.json
+
+ledger:
+  jwt:
+    # HS256 secret, at least 32 bytes. Override in every real environment.
+    secret: ${JWT_SECRET:dev-only-secret-change-me-0123456789abcdef}
+    ttl-minutes: ${JWT_TTL_MINUTES:60}
+  rate-limit:
+    requests-per-minute: ${RATE_LIMIT_PER_MINUTE:120}
+  limits:
+    # Outgoing transfers + payments per wallet per Malaysian calendar day (sen). RM 5,000.00.
+    daily-outgoing-sen: ${DAILY_LIMIT_SEN:500000}
+    max-single-amount-sen: ${MAX_SINGLE_AMOUNT_SEN:500000}
+    zone: Asia/Kuala_Lumpur
+  risk:
+    # Base URL of project 04 fraud-detection-api (POST {url}/predict). Empty = risk check off.
+    url: ${RISK_URL:}
+    timeout-ms: ${RISK_TIMEOUT_MS:800}
+    block-threshold: ${RISK_BLOCK_THRESHOLD:0.9}
+    fail-open: ${RISK_FAIL_OPEN:true}
+  webhooks:
+    poll-ms: ${WEBHOOK_POLL_MS:1000}
+    max-attempts: ${WEBHOOK_MAX_ATTEMPTS:8}
+    base-backoff-ms: ${WEBHOOK_BASE_BACKOFF_MS:2000}
+  admin:
+    email: ${ADMIN_EMAIL:}
+    password: ${ADMIN_PASSWORD:}
