@@ -96,7 +96,7 @@ CREATE TABLE idempotency_keys (
     idem_key      text NOT NULL,
     request_hash  text NOT NULL,
     status_code   int NOT NULL,
-    response_body jsonb NOT NULL,
+    response_body json NOT NULL,          -- json, not jsonb: replay must be byte-identical
     created_at    timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY (user_id, idem_key)
 );
