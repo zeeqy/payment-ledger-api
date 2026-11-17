@@ -1,5 +1,6 @@
 package io.github.zeeqy.ledger;
 
+import io.github.zeeqy.ledger.auth.UserService;
 import io.github.zeeqy.ledger.payments.OperationsService;
 import java.util.UUID;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -11,10 +12,16 @@ public class TestData {
 
     private final JdbcClient jdbc;
     private final OperationsService ops;
+    private final UserService users;
 
-    public TestData(JdbcClient jdbc, OperationsService ops) {
+    public TestData(JdbcClient jdbc, OperationsService ops, UserService users) {
         this.jdbc = jdbc;
         this.ops = ops;
+        this.users = users;
+    }
+
+    public String token(UUID userId, String role) {
+        return users.issue(userId, role).accessToken();
     }
 
     public UUID user(String role) {

@@ -6,15 +6,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /** The database itself refuses unbalanced entries, overdrafts and edits, even if application code is buggy. */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Import(TestcontainersConfiguration.class)
-class SchemaGuardsTest {
+class SchemaGuardsTest extends IntegrationTest {
 
     @Autowired
     JdbcClient jdbc;

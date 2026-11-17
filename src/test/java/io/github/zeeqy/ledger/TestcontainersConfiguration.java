@@ -9,9 +9,16 @@ import org.testcontainers.utility.DockerImageName;
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfiguration {
 
+    /** One real Postgres for the whole test run, shared by every Spring context. */
+    static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer(DockerImageName.parse("postgres:17-alpine"));
+
+    static {
+        POSTGRES.start();
+    }
+
     @Bean
     @ServiceConnection
     PostgreSQLContainer postgresContainer() {
-        return new PostgreSQLContainer(DockerImageName.parse("postgres:17-alpine"));
+        return POSTGRES;
     }
 }

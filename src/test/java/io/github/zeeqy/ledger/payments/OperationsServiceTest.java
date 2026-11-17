@@ -3,25 +3,17 @@ package io.github.zeeqy.ledger.payments;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.github.zeeqy.ledger.TestData;
-import io.github.zeeqy.ledger.TestcontainersConfiguration;
+import io.github.zeeqy.ledger.IntegrationTest;
 import io.github.zeeqy.ledger.common.ApiException;
 import java.util.UUID;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Import({TestcontainersConfiguration.class, TestData.class})
-class OperationsServiceTest {
+class OperationsServiceTest extends IntegrationTest {
 
     @Autowired
     OperationsService ops;
-
-    @Autowired
-    TestData data;
 
     static void assertCode(ThrowingCallable call, String code) {
         assertThatThrownBy(call)

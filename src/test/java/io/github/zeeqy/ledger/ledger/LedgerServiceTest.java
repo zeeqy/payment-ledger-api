@@ -3,7 +3,7 @@ package io.github.zeeqy.ledger.ledger;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.github.zeeqy.ledger.TestcontainersConfiguration;
+import io.github.zeeqy.ledger.IntegrationTest;
 import io.github.zeeqy.ledger.common.ApiException;
 import io.github.zeeqy.ledger.ledger.LedgerService.EntryKind;
 import io.github.zeeqy.ledger.ledger.LedgerService.Leg;
@@ -11,15 +11,11 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.transaction.IllegalTransactionStateException;
 import org.springframework.transaction.support.TransactionTemplate;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Import(TestcontainersConfiguration.class)
-class LedgerServiceTest {
+class LedgerServiceTest extends IntegrationTest {
 
     @Autowired
     LedgerService ledger;
