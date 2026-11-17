@@ -30,5 +30,17 @@ services:
     ports:
       - "8080:8080"
 
+  k6:
+    image: grafana/k6:1.4.2
+    profiles: ["load"]   # docker compose --profile app --profile load run --rm k6
+    depends_on: [api]
+    environment:
+      BASE_URL: http://api:8080
+      RATE: ${RATE:-400}
+      DURATION: ${DURATION:-60s}
+    volumes:
+      - ./load:/load
+    command: run --summary-export /load/results/summary.json /load/ledger.js
+
 volumes:
   ledger-data:
