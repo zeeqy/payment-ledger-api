@@ -47,9 +47,9 @@ ledger:
     zone: Asia/Kuala_Lumpur
   risk:
     # Base URL of project 04 fraud-detection-api (POST {url}/predict). Empty = risk check off.
+    # Its "decision" (flag/allow, threshold chosen by that model) decides; flag = declined.
     url: ${RISK_URL:}
     timeout-ms: ${RISK_TIMEOUT_MS:800}
-    block-threshold: ${RISK_BLOCK_THRESHOLD:0.9}
     fail-open: ${RISK_FAIL_OPEN:true}
   webhooks:
     poll-ms: ${WEBHOOK_POLL_MS:1000}

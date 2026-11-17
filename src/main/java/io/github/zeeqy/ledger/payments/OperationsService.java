@@ -129,11 +129,12 @@ public class OperationsService {
         if (from.equals(toWalletId)) {
             throw ApiException.unprocessable("SAME_ACCOUNT", "Cannot transfer to your own wallet");
         }
+        hooks.screen(userId, from, toWalletId, EntryKind.TRANSFER, amountSen);
         var locked = ledger.lock(List.of(from, toWalletId));
         if (!"WALLET".equals(locked.get(toWalletId).kind())) {
             throw ApiException.unprocessable("NOT_A_WALLET", "Transfers go to wallets; pay merchants via /payments");
         }
-        hooks.beforeOutgoing(userId, from, toWalletId, EntryKind.TRANSFER, amountSen);
+        hooks.beforeOutgoing(userId, from, EntryKind.TRANSFER, amountSen);
         UUID entry = ledger.post(
                 EntryKind.TRANSFER,
                 note,
@@ -150,8 +151,9 @@ public class OperationsService {
         UUID merchantAccount = merchantAccount(merchantId)
                 .orElseThrow(
                         () -> ApiException.notFound("MERCHANT_NOT_FOUND", "Merchant " + merchantId + " not found"));
+        hooks.screen(userId, from, merchantAccount, EntryKind.PAYMENT, amountSen);
         ledger.lock(List.of(from, merchantAccount));
-        hooks.beforeOutgoing(userId, from, merchantAccount, EntryKind.PAYMENT, amountSen);
+        hooks.beforeOutgoing(userId, from, EntryKind.PAYMENT, amountSen);
         UUID entry = ledger.post(
                 EntryKind.PAYMENT,
                 reference,

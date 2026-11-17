@@ -16,7 +16,11 @@ import tools.jackson.databind.json.JsonMapper;
 /** Boots the real app on a random port against a real Postgres. Subclasses share one Spring context. */
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"ledger.rate-limit.requests-per-minute=1000000", "ledger.webhooks.poll-ms=100"})
+        properties = {
+            "ledger.rate-limit.requests-per-minute=1000000",
+            "ledger.webhooks.poll-ms=100",
+            "ledger.webhooks.base-backoff-ms=100"
+        })
 @Import({TestcontainersConfiguration.class, TestData.class})
 public abstract class IntegrationTest {
 

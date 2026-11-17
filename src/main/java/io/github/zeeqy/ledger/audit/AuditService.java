@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.UUID;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import tools.jackson.databind.json.JsonMapper;
@@ -25,10 +28,19 @@ public class AuditService {
 
     private final JdbcClient jdbc;
     private final JsonMapper json;
+    private final TransactionTemplate independent;
 
-    public AuditService(JdbcClient jdbc, JsonMapper json) {
+    public AuditService(JdbcClient jdbc, JsonMapper json, PlatformTransactionManager txManager) {
         this.jdbc = jdbc;
         this.json = json;
+        this.independent = new TransactionTemplate(txManager);
+        this.independent.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+    }
+
+    /** Commits on its own, so the record survives even when the surrounding operation is refused and rolled back. */
+    public void recordIndependently(
+            UUID actorId, String action, String entityType, Object entityId, Map<String, ?> details) {
+        independent.executeWithoutResult(s -> record(actorId, action, entityType, entityId, details));
     }
 
     public void record(UUID actorId, String action, String entityType, Object entityId, Map<String, ?> details) {
